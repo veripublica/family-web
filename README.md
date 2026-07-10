@@ -32,7 +32,8 @@ the recommendation is missing.
 
 ## License
 
-Not yet declared — to be decided by the owner before any external reuse.
-(The tools are `AGPL-3.0-only OR LicenseRef-veripublica-Commercial`; the
-conventions spec is `CC-BY-4.0`; this repository's mix of documentation and
-embeddable assets needs its own decision.)
+**[AGPL-3.0-only](./LICENSE)** — the family's house license, covering
+everything in this repository: documentation, measurement scripts, and the
+shared template assets to come. (The conventions *spec* is CC-BY-4.0 because a
+convention is meant to be adopted; this repository is code and analysis, and
+takes the code license.)
