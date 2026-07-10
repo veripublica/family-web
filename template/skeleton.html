@@ -1,0 +1,105 @@
+<!doctype html>
+<!-- veripublica family-web — skeleton.html — template v1
+     https://github.com/veripublica/family-web
+
+     The shared shape of a family WASM demo page. Copy this next to your
+     pkg/ output together with tokens.css and demo.css, then fill every
+     TOOL: comment. Tool-specific result markup goes inside #result;
+     tool-specific styles go in the inline <style> block, which starts empty
+     on purpose — if something you write there would make sense for a
+     sibling too, it belongs in demo.css via a family-web change instead. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- TOOL: title, e.g. "epubveri — EPUB validation in the browser (WASM)" -->
+    <title>TOOLNAME — WHAT IT DOES in the browser (WASM)</title>
+    <link rel="stylesheet" href="./tokens.css" />
+    <link rel="stylesheet" href="./demo.css" />
+    <style>
+      /* TOOL: page-local styles only (e.g. epubsana's .fix cards, badge
+         tiers; epubveri's .id column). Keep this block small. */
+    </style>
+  </head>
+  <body>
+    <main>
+      <!-- TOOL: name -->
+      <h1>TOOLNAME <span class="demo-tag">· WASM demo</span></h1>
+      <!-- TOOL: one honest sentence; keep the no-upload promise. -->
+      <p class="sub">A pure-Rust TOOL running entirely in your browser — no upload, no server. Your file never leaves this page.</p>
+
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept=".epub,application/epub+zip" />
+        Drop an <strong>.epub</strong> here, or click to choose one.
+      </label>
+
+      <!-- TOOL: loading message, e.g. "Loading validator…" -->
+      <p class="status" id="status">Loading…</p>
+
+      <section id="result" hidden>
+        <!-- TOOL: result markup (verdict + table, fix cards + actionbar, …) -->
+      </section>
+
+      <footer>
+        <!-- TOOL: crate name -->
+        Served locally over HTTP. Built with <code>wasm-pack</code> from the
+        <code>TOOLNAME-wasm</code> crate. <span id="ver"></span>
+        <nav class="family">
+          A <a href="https://github.com/veripublica">veripublica</a> tool ·
+          <!-- TOOL: keep every sibling; render the current tool as a <span>,
+               not a link. -->
+          <a href="https://github.com/veripublica/epubveri">epubveri</a>
+          <a href="https://github.com/veripublica/epubsana">epubsana</a>
+          <a href="https://github.com/veripublica/epublift">epublift</a>
+          <a href="https://github.com/veripublica/conventions">conventions</a>
+        </nav>
+      </footer>
+    </main>
+
+    <script type="module">
+      // TOOL: import your pkg and wire the drop zone. The drag/drop handlers
+      // below are the shared part; run() is yours.
+      import init, { version /* , validate | Session … */ } from "../pkg/TOOLNAME.js";
+
+      const statusEl = document.getElementById("status");
+      const dropEl = document.getElementById("drop");
+      const fileEl = document.getElementById("file");
+
+      let ready = false;
+      init()
+        .then(() => {
+          ready = true;
+          statusEl.textContent = "Ready. Drop an .epub.";
+          document.getElementById("ver").textContent = "TOOLNAME-wasm v" + version();
+        })
+        .catch((e) => {
+          statusEl.textContent = "Failed to load: " + e;
+        });
+
+      async function run(file) {
+        if (!ready) return;
+        // TOOL: hand the bytes to your wasm API and render into #result.
+      }
+
+      fileEl.addEventListener("change", () => {
+        if (fileEl.files.length) run(fileEl.files[0]);
+      });
+      ["dragenter", "dragover"].forEach((ev) =>
+        dropEl.addEventListener(ev, (e) => {
+          e.preventDefault();
+          dropEl.classList.add("over");
+        }),
+      );
+      ["dragleave", "drop"].forEach((ev) =>
+        dropEl.addEventListener(ev, (e) => {
+          e.preventDefault();
+          dropEl.classList.remove("over");
+        }),
+      );
+      dropEl.addEventListener("drop", (e) => {
+        const f = e.dataTransfer?.files?.[0];
+        if (f) run(f);
+      });
+    </script>
+  </body>
+</html>
