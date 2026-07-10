@@ -32,8 +32,10 @@ the recommendation is missing.
 
 ## License
 
-**[AGPL-3.0-only](./LICENSE)** — the family's house license, covering
-everything in this repository: documentation, measurement scripts, and the
-shared template assets to come. (The conventions *spec* is CC-BY-4.0 because a
-convention is meant to be adopted; this repository is code and analysis, and
-takes the code license.)
+**`AGPL-3.0-only OR LicenseRef-veripublica-Commercial`** — the family's house
+dual license, covering everything in this repository: documentation,
+measurement scripts, and the shared template assets to come. See
+[`LICENSE`](./LICENSE) for the AGPL text and
+[`LICENSE-COMMERCIAL.md`](./LICENSE-COMMERCIAL.md) for the commercial option.
+(The conventions *spec* is CC-BY-4.0 because a convention is meant to be
+adopted; this repository is code and analysis, and takes the code license.)
