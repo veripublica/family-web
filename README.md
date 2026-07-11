@@ -15,7 +15,7 @@ soon — how they look.
 | --- | --- |
 | [`wasm/BUILD-PROFILE.md`](./wasm/BUILD-PROFILE.md) | The measured release-profile recommendation for the family's WASM crates — every alternative benchmarked, with the numbers that rejected it. |
 | [`wasm/matrix/`](./wasm/matrix/) | The scripts that produced those numbers. Parametrized; run them against any sibling crate before assuming the results transfer. |
-| [`template/`](./template/) | **The family demo template, v1** — `tokens.css`, `demo.css`, `skeleton.html`, extracted from the two existing demos the day their hand-copied styles were caught drifting. Consumption: copy + version note, no build dependency. Adoption notes for each demo are in its README. |
+| [`template/`](./template/) | **The family demo template, v2** — `tokens.css`, `demo.css`, `skeleton.html`, extracted from the two existing demos the day their hand-copied styles were caught drifting. Consumption: copy + version note, no build dependency. Adoption notes, and what changed in v2, are in its README. |
 
 ## The house rule this repository exists to serve
 

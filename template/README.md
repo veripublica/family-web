@@ -1,9 +1,22 @@
-# The family demo template — v1
+# The family demo template — v2
 
 The shared look of the veripublica WASM demo pages, in **one copy**. Extracted
 2026-07-10 from `epubveri-wasm` and `epubsana-wasm`, whose demos were the same
 hand-copied template and had already begun to drift (`.counts` was `.9rem` in
 one and `.95rem` in the other — small, but that is how divergence starts).
+
+## What changed in v2
+
+Three things, and one of them can bite you quietly.
+
+| Change | What it means for you |
+| --- | --- |
+| **Severity is five values, lowercase** (#1) | ⚠️ **A demo still emitting `class="sev ERROR"` renders severities uncolored after re-copying** — see below. This is the one to check. |
+| **A `data-theme` hook, and an optional toggle** (#3) | Nothing to do. Auto light/dark is unchanged; the toggle is opt-in. |
+| **Chip wash 14% → 8%** (#4) | Verdict chips read slightly flatter. They now pass WCAG AA in light mode; at 14% both variants failed. |
+
+Nothing else moved. If your demo already renders lowercase severities, re-copying
+`tokens.css` and `demo.css` is the whole upgrade.
 
 ## Files
 
@@ -22,7 +35,7 @@ No build dependency, no submodule. A demo repo:
 2. links them and deletes the corresponding rules from its inline `<style>`,
    keeping only tool-specific rules there;
 3. records the template version in a comment:
-   `<!-- family-web template v1 -->`.
+   `<!-- family-web template v2 -->`.
 
 When the template changes, family-web bumps the version in the file headers
 and the consuming repos re-copy on their own schedule. The version comment is
