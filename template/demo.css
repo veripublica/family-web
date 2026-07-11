@@ -67,11 +67,29 @@ a { color: var(--accent); }
 .verdict.valid { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
 .verdict.invalid { color: var(--err); background: color-mix(in srgb, var(--err) 14%, transparent); }
 
-/* Severity colors — from epubveri. The family's finding severities. */
+/* Severity colors — from epubveri, widened to the family's five-value
+ * vocabulary (conventions v0.4.0, FORMATS.md §1.3).
+ *
+ * The class names are the envelope's `severity` string written straight into
+ * the DOM — lowercase, no aliases. A demo still emitting the old uppercase
+ * spelling keeps its own rule locally until it converges; the shared file does
+ * not carry both spellings, because carrying both is how the two spellings
+ * survive.
+ *
+ * fatal gets a background wash on top of its color. That is not decoration: in
+ * dark mode no red outranks --err on intensity, so color alone cannot say
+ * "worse than error" — the wash does. Same 14% mix the .verdict chip uses. */
 .sev { font-weight: 700; white-space: nowrap; }
-.sev.ERROR { color: var(--err); }
-.sev.WARNING { color: var(--warn); }
-.sev.INFO { color: var(--muted); }
+.sev.fatal {
+  color: var(--fatal);
+  background: color-mix(in srgb, var(--fatal) 14%, transparent);
+  padding: .05rem .35rem;
+  border-radius: 5px;
+}
+.sev.error { color: var(--err); }
+.sev.warning { color: var(--warn); }
+.sev.info { color: var(--muted); }
+.sev.usage { color: var(--usage); }
 
 /* Findings table — from epubveri. */
 table { width: 100%; border-collapse: collapse; font-size: .88rem; }

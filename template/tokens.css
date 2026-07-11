@@ -6,6 +6,14 @@
  * byte-identical. Consumers copy this file next to their demo page and link
  * it; local overrides go in the page's own stylesheet, never in a fork of
  * this one.
+ *
+ * The severity tokens (--fatal, --err, --warn, --usage; `info` deliberately
+ * reuses --muted) are listed in rank order and every one clears WCAG AA on its
+ * mode's --bg. Note --fatal is *lighter* than --err in dark mode, not darker:
+ * on a dark background there is no red above --err with both enough contrast
+ * and enough separation from it, so --fatal is chosen for legibility and the
+ * rank is carried by the background wash on .sev.fatal instead. Do not "fix"
+ * it by darkening. (Measured; see issue #1.)
  */
 :root {
   color-scheme: light dark;
@@ -15,8 +23,10 @@
   --border: #ddd;
   --card: #f7f7f8;
   --ok: #1a7f37;
+  --fatal: #82071e;
   --err: #cf222e;
   --warn: #9a6700;
+  --usage: #476b74;
   --accent: #4b3fce;
 }
 @media (prefers-color-scheme: dark) {
@@ -27,8 +37,10 @@
     --border: #33333a;
     --card: #1f1f25;
     --ok: #4ac26b;
+    --fatal: #ffa198;
     --err: #ff6b74;
     --warn: #d9a441;
+    --usage: #8aa8b0;
     --accent: #9d94ff;
   }
 }

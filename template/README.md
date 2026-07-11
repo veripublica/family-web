@@ -50,3 +50,24 @@ page-local. Footer gains the family nav.
 
 Neither demo's JS changes. (The Web-Worker recommendation in
 [`../wasm/BUILD-PROFILE.md`](../wasm/BUILD-PROFILE.md) is separate work.)
+
+## Severity: one thing to check when you re-copy
+
+The `.sev` classes are **lowercase, five values** — `fatal`, `error`, `warning`,
+`info`, `usage` — spelled exactly as the JSON envelope spells `severity`
+(conventions FORMATS.md §1.3). The class name is the envelope string written
+straight into the DOM; there is no translation step, and the shared file carries
+no uppercase aliases.
+
+So a demo whose JS still writes the old uppercase spelling (`class="sev ERROR"`)
+will render severities in plain body color after re-copying — legible, but
+uncolored, and silently so. Either move the demo to the envelope spelling in the
+same change, or keep its uppercase rule in the page's local `<style>` until it
+converges. Both are fine; doing neither is the one that looks like nothing
+happened.
+
+`fatal` is the only severity with a background wash — see the note in
+`tokens.css` for why the color alone cannot carry its rank in dark mode. Tools
+that inherit a severity onto a derived item (epubsana's fix cards take the
+severity of the finding they address) get the wash there too, which is correct:
+a fix for a fatal finding is as urgent as the finding.
