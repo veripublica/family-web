@@ -1,4 +1,4 @@
-/* veripublica family-web — demo.css — template v1
+/* veripublica family-web — demo.css — template v2
  * https://github.com/veripublica/family-web
  *
  * The shared skeleton of the family's WASM demo pages. Requires tokens.css.
@@ -52,6 +52,21 @@ a { color: var(--accent); }
 
 /* ========================== COMPONENTS ============================ */
 
+/* The tint behind a state chip (.verdict, .sev.fatal). Not a color, so it does
+ * not belong in tokens.css — it is a property of this component layer.
+ *
+ * 8%, not the 14% v1 shipped with: at 14% *both* light-mode verdict variants
+ * failed WCAG AA on their own wash (.valid 4.20:1, .invalid 4.27:1 — the pass
+ * verdict, the one most readers see, was the worse of the two). 8% is the
+ * strongest tint at which every chip clears the bar in both modes:
+ *
+ *   light  .verdict.valid 4.57  .verdict.invalid 4.71  .sev.fatal 9.00
+ *   dark   .verdict.valid 7.00  .verdict.invalid 5.89  .sev.fatal 8.08
+ *
+ * One value, because three chips carrying three copies of the number is how one
+ * of them ends up wrong again — which is exactly how this was found. (issue #4) */
+:root { --wash: 8%; }
+
 /* Family footer nav — new in template v1: the line that makes the family
  * visible. One link per sibling; the current tool renders itself as plain
  * text, not a link. */
@@ -85,8 +100,8 @@ a { color: var(--accent); }
   font-weight: 700; font-size: 1.1rem; padding: .4rem .8rem;
   border-radius: 8px; margin: 1rem 0 .5rem;
 }
-.verdict.valid { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
-.verdict.invalid { color: var(--err); background: color-mix(in srgb, var(--err) 14%, transparent); }
+.verdict.valid { color: var(--ok); background: color-mix(in srgb, var(--ok) var(--wash), transparent); }
+.verdict.invalid { color: var(--err); background: color-mix(in srgb, var(--err) var(--wash), transparent); }
 
 /* Severity colors — from epubveri, widened to the family's five-value
  * vocabulary (conventions v0.4.0, FORMATS.md §1.3).
@@ -99,11 +114,11 @@ a { color: var(--accent); }
  *
  * fatal gets a background wash on top of its color. That is not decoration: in
  * dark mode no red outranks --err on intensity, so color alone cannot say
- * "worse than error" — the wash does. Same 14% mix the .verdict chip uses. */
+ * "worse than error" — the wash does. Same --wash the .verdict chip uses. */
 .sev { font-weight: 700; white-space: nowrap; }
 .sev.fatal {
   color: var(--fatal);
-  background: color-mix(in srgb, var(--fatal) 14%, transparent);
+  background: color-mix(in srgb, var(--fatal) var(--wash), transparent);
   padding: .05rem .35rem;
   border-radius: 5px;
 }
