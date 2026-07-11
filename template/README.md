@@ -7,16 +7,36 @@ one and `.95rem` in the other — small, but that is how divergence starts).
 
 ## What changed in v2
 
-Three things, and one of them can bite you quietly.
-
 | Change | What it means for you |
 | --- | --- |
 | **Severity is five values, lowercase** (#1) | ⚠️ **A demo still emitting `class="sev ERROR"` renders severities uncolored after re-copying** — see below. This is the one to check. |
+| **The drop zone is keyboard-reachable** (#5) | ⚠️ It was not, since v1: `display: none` on the file input made the demo's only interaction mouse-only. Fixed in `demo.css`; **no markup change** — re-copying is the fix. |
+| **A focus layer, and form controls** (#6) | Nothing to do. Focus rings appear where there were none. `select`, checkbox and radio now come styled, so a demo that needs one just writes the markup. |
 | **A `data-theme` hook, and an optional toggle** (#3) | Nothing to do. Auto light/dark is unchanged; the toggle is opt-in. |
 | **Chip wash 14% → 8%** (#4) | Verdict chips read slightly flatter. They now pass WCAG AA in light mode; at 14% both variants failed. |
 
-Nothing else moved. If your demo already renders lowercase severities, re-copying
-`tokens.css` and `demo.css` is the whole upgrade.
+If your demo already renders lowercase severities, re-copying `tokens.css` and
+`demo.css` is the whole upgrade — and it is worth doing for #5 alone.
+
+## Versions: there are two numbers, on purpose
+
+- **The template version** (`v2`) is the *generation of the look*. It is what a
+  consumer writes in its copy comment, and what answers "am I behind?".
+- **The repository tag** (`v0.2.0`) is the *exact bytes*. A fix to
+  `wasm/BUILD-PROFILE.md` moves the tag and not the template; no demo needs to
+  re-copy for it.
+
+| Template | family-web tag |
+| --- | --- |
+| v1 | v0.1.0 |
+| v2 | v0.2.0 |
+
+Two numbers is two things to keep in step, so the copy comment carries **both** —
+one grep answers which generation a demo is on *and* which bytes it took:
+
+```html
+<!-- family-web template v2 (family-web v0.2.0) -->
+```
 
 ## Files
 
@@ -34,8 +54,8 @@ No build dependency, no submodule. A demo repo:
 1. copies `tokens.css` and `demo.css` next to its `demo/index.html`;
 2. links them and deletes the corresponding rules from its inline `<style>`,
    keeping only tool-specific rules there;
-3. records the template version in a comment:
-   `<!-- family-web template v2 -->`.
+3. records the template version and the tag it came from, in a comment:
+   `<!-- family-web template v2 (family-web v0.2.0) -->`.
 
 When the template changes, family-web bumps the version in the file headers
 and the consuming repos re-copy on their own schedule. The version comment is
@@ -44,6 +64,37 @@ what makes "which demos are behind?" a grep instead of an investigation.
 **The one rule:** a consumer never edits its copy of `tokens.css`/`demo.css`.
 If a change is worth making, it is worth making here, for everyone — that is
 the entire point of the single copy. Page-local styles live in the page.
+
+## Where does my new style go?
+
+**You never open an issue to *use* the template. Only to *change* it.** A demo that
+needs something writes it in its own `<style>` and ships today; nothing here can
+block a release.
+
+The line between what belongs in the shared files and what stays in the page:
+
+| Stays in your page | Belongs in `demo.css` |
+| --- | --- |
+| **Your tool's vocabulary** — epubsana's badge tiers (`.AutoSafe`, `.ConfirmNeeded`), its fix cards; epubveri's `.id` column | **Generic UI primitives** — form controls, focus, tables, buttons, links. Nothing about them is specific to one tool. |
+| **Page layout** — margins, spacing between your own sections | **Anything `conventions` names** — severity is shared *because the family spec defines the vocabulary*, not because two demos happened to want it. |
+
+And the rule the two columns follow:
+
+> **The design layer may run ahead of demand. The semantic layer may not.**
+
+Generic primitives are built here *before anyone asks*, which is why `select`,
+checkbox and radio already exist though no tool has used one. That is not a
+violation of the family's *no value is invented for an unnamed need* — that rule
+protects **contracts**, where an unused slot is a lie about what the spec means. A
+styled `<select>` is not a contract; nobody has to consume it. Waiting for a named
+need would only guarantee that the first tool writes its own dropdown page-local and
+the second writes a different one — the exact drift this repository exists to end.
+A tool's own vocabulary is the other case: there, guessing *is* inventing, and it
+waits.
+
+If you write something page-local that a sibling would plausibly want, open an issue
+**and keep shipping**. The issue changes the shared file on family-web's schedule;
+your release does not wait for it, and when it lands you delete your local rule.
 
 ## Adoption notes for the two existing demos
 
@@ -85,6 +136,34 @@ happened.
 that inherit a severity onto a derived item (epubsana's fix cards take the
 severity of the finding they address) get the wash there too, which is correct:
 a fix for a fatal finding is as urgent as the finding.
+
+## Form controls and focus
+
+Native controls, kept native. `demo.css` sets **one property** —
+`accent-color: var(--accent)` — and that styles checkbox, radio, range and progress
+in both themes, with no markup and no JS. `select` matches the button shape and keeps
+the browser's own arrow and popup, which are faster, more accessible, and far better
+on a phone than anything drawn with pseudo-elements. Write the `<input>`; you are
+done.
+
+**Focus.** There was no `:focus` rule in the template until v2 — the whole layer was
+missing, which is how a keyboard-unreachable drop zone (#5) survived a release. The
+ring is `--accent` at 2px with a 2px offset, and it clears WCAG 2.2 SC 1.4.11's 3:1
+against every color it can land beside (light: 7.24 / 6.76 / 5.33 against `--bg`,
+`--card`, `--border`; dark: 6.97 / 6.33 / 4.84).
+
+**One thing you have to do yourself: wrap a checkbox or radio in its `<label>`.**
+
+```html
+<label class="opt"><input type="checkbox" checked> Show usage findings</label>
+```
+
+A native checkbox is about 13px, well under WCAG 2.2 SC 2.5.8's 24×24 minimum. The
+template does **not** resize it — an author-unmodified control falls under the
+standard's user-agent exception, and a stretched checkbox looks wrong in every
+browser for different reasons. The label is what makes the target big enough, and
+it is a line of HTML, not CSS. That is why it is documented here rather than
+solved in the shared file.
 
 ## Theme: three states, and the toggle is optional
 
