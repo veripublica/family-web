@@ -9,9 +9,10 @@ one and `.95rem` in the other — small, but that is how divergence starts).
 
 | File | What it is |
 | --- | --- |
-| `tokens.css` | The design tokens (colors, light/dark). Byte-identical in both demos at extraction; now canonical here. |
-| `demo.css` | The page skeleton (base layer, identical at extraction) plus the family components (verdict chip, severity colors, findings table, buttons, badge base, family footer nav) — each promoted from the one demo that had it, so the next tool reuses instead of reinventing. |
+| `tokens.css` | The design tokens (colors, light/dark, and the `data-theme` hook). Byte-identical in both demos at extraction; now canonical here. |
+| `demo.css` | The page skeleton (base layer, identical at extraction) plus the family components (verdict chip, severity colors, findings table, buttons, badge base, family footer nav, theme toggle) — each promoted from the one demo that had it, so the next tool reuses instead of reinventing. |
 | `skeleton.html` | The page shape. Copy, then fill every `TOOL:` comment. |
+| `check-tokens.mjs` | Not copied by consumers. Fails loudly if `tokens.css`'s `@supports` floor drifts from its `light-dark()` pairs. Deleted together with the floor. |
 
 ## Consumption model: copy + version note
 
@@ -71,3 +72,51 @@ happened.
 that inherit a severity onto a derived item (epubsana's fix cards take the
 severity of the finding they address) get the wash there too, which is correct:
 a fix for a fatal finding is as urgent as the finding.
+
+## Theme: three states, and the toggle is optional
+
+`tokens.css` reads one attribute on `<html>`:
+
+| `data-theme` | Result |
+| --- | --- |
+| absent | **auto** — the OS decides. This is the v1 behaviour, unchanged. |
+| `"dark"` | dark, whatever the OS says |
+| `"light"` | light, whatever the OS says |
+
+That is the whole hook, and it lives in the tokens because it has to: *"a consumer
+never edits its copy"* makes a page-local override of the dark values illegal by
+the one rule. A consumer that wants a toggle **sets the attribute**; a consumer
+that doesn't want one copies nothing extra and still gets auto light/dark. The
+conventions site, which takes `tokens.css` alone with its own Jekyll layout, gets
+the hook for free.
+
+`skeleton.html` carries a reference toggle in two parts, and they are not
+interchangeable:
+
+- **In `<head>`, inline, not deferred** — reads the stored choice and sets the
+  attribute *before the first paint*. This placement is the feature. Move it to
+  the module script at the bottom and a reader who chose dark gets a white flash
+  on every load, which is the bug the toggle exists to avoid.
+- **In the footer** — the button that cycles auto → dark → light and persists the
+  choice. Delete this and the page is auto-only; nothing else breaks.
+
+Both are guarded on `CSS.supports("color", "light-dark(…)")`, and `demo.css` hides
+the button under the same `@supports` test. On a browser without `light-dark()`
+the attribute would move the scrollbars and nothing else, and a control that
+appears to do something while doing nothing is worse than no control.
+
+### Why `tokens.css` says every color twice
+
+`light-dark()` is Baseline *newly available* (May 2024) — not yet widely
+available, and Safari's version is bound to the OS, so the tail does not close on
+its own. If the tokens used `light-dark()` alone, then on those browsers every
+`var(--x)` would be invalid at computed-value time and the entire semantic color
+layer — severity ramp, verdict chip, link color — would disappear **silently**: a
+legible page that has quietly stopped saying anything.
+
+So the file states the modern values once, in `light-dark()` pairs, and restates
+them in an `@supports not (…)` floor that gives those browsers exactly the v1
+behaviour. The duplication is real and it is a drift vector, so it is not left to
+a comment: **`node template/check-tokens.mjs`** fails if the two ever disagree.
+When the support bar moves, delete the floor *and* the script — a check that can
+no longer fail is a lie about how much is being verified.

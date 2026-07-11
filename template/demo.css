@@ -58,6 +58,27 @@ a { color: var(--accent); }
 .family { margin-top: .5rem; }
 .family a, .family span { margin-right: .6rem; white-space: nowrap; }
 
+/* Theme toggle — the control for tokens.css's data-theme hook (#3). Optional:
+ * a demo that doesn't want it drops the button and its script from the page and
+ * still gets the auto behaviour, because the hook lives in the tokens.
+ *
+ * Hidden unless light-dark() actually works — the same test that guards the
+ * floor in tokens.css. Without light-dark() the attribute would move the
+ * scrollbars and nothing else, and a control that appears to do something while
+ * doing nothing is worse than no control. */
+.theme-toggle { display: none; }
+@supports (color: light-dark(#000000, #ffffff)) {
+  .theme-toggle {
+    display: inline-block;
+    font-size: .8rem;
+    background: none;
+    color: var(--muted);
+    padding: .1rem .45rem;
+    margin-left: .3rem;
+  }
+  .theme-toggle:hover { color: var(--fg); border-color: var(--muted); }
+}
+
 /* Verdict chip — from epubveri. Any tool with a pass/fail answer uses this. */
 .verdict {
   display: inline-flex; align-items: center; gap: .5rem;

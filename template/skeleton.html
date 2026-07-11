@@ -16,6 +16,24 @@
     <title>TOOLNAME — WHAT IT DOES in the browser (WASM)</title>
     <link rel="stylesheet" href="./tokens.css" />
     <link rel="stylesheet" href="./demo.css" />
+    <script>
+      // Theme, part 1 of 2 (part 2 is the toggle button in the footer).
+      //
+      // This MUST stay here: in <head>, inline, and not deferred. It runs before
+      // the first paint, so a reader who chose dark never sees a white flash on
+      // the way to it. Move it to the module script at the bottom and the flash
+      // comes back — which is the whole bug this guards against.
+      //
+      // Guarded on light-dark(): without it, data-theme moves the scrollbars and
+      // nothing else (see the floor in tokens.css), so we don't set it at all.
+      // try/catch because localStorage throws when storage is blocked.
+      try {
+        if (CSS.supports("color", "light-dark(#000,#fff)")) {
+          const t = localStorage.getItem("theme");
+          if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;
+        }
+      } catch {}
+    </script>
     <style>
       /* TOOL: page-local styles only (e.g. epubsana's .fix cards, badge
          tiers; epubveri's .id column). Keep this block small. */
@@ -53,6 +71,37 @@
           <a href="https://github.com/veripublica/epublift">epublift</a>
           <a href="https://github.com/veripublica/conventions">conventions</a>
         </nav>
+        <!-- Theme, part 2 of 2: the toggle. OPTIONAL — delete this button and
+             the script below it and the page keeps the auto light/dark
+             behaviour; the hook lives in tokens.css, not here. The button hides
+             itself where light-dark() is unsupported (demo.css). -->
+        <button class="theme-toggle" id="theme" type="button"></button>
+        <script>
+          (() => {
+            const root = document.documentElement;
+            const btn = document.getElementById("theme");
+            const cycle = ["auto", "dark", "light"];
+            const label = { auto: "◐ auto", dark: "☾ dark", light: "☀ light" };
+            const save = (v) => {
+              try {
+                v ? localStorage.setItem("theme", v) : localStorage.removeItem("theme");
+              } catch {}
+            };
+            const current = () => root.dataset.theme || "auto";
+            const paint = () => {
+              btn.textContent = label[current()];
+              btn.title = "Theme: " + current() + " — click to change";
+            };
+            btn.addEventListener("click", () => {
+              const next = cycle[(cycle.indexOf(current()) + 1) % cycle.length];
+              if (next === "auto") delete root.dataset.theme;
+              else root.dataset.theme = next;
+              save(next === "auto" ? null : next);
+              paint();
+            });
+            paint();
+          })();
+        </script>
       </footer>
     </main>
 
