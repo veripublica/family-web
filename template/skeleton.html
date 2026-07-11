@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- veripublica family-web — skeleton.html — template v2
+<!-- veripublica family-web — skeleton.html — template v3
      https://github.com/veripublica/family-web
 
      The shared shape of a family WASM demo page. Copy this next to your
@@ -12,8 +12,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- TOOL: title, e.g. "epubveri — EPUB validation in the browser (WASM)" -->
-    <title>TOOLNAME — WHAT IT DOES in the browser (WASM)</title>
+    <!-- TOOL: title, e.g. "epubveri — EPUB validation in your browser".
+         Say what the tool does for the reader. No "WASM", no "demo": the person
+         who lands here has an EPUB to check, not a runtime to shop for, and this
+         string is what shows in a search result and a browser tab. (#9) -->
+    <title>TOOLNAME — WHAT IT DOES in your browser</title>
     <link rel="stylesheet" href="./tokens.css" />
     <link rel="stylesheet" href="./demo.css" />
     <script>
@@ -41,40 +44,21 @@
   </head>
   <body>
     <main>
-      <!-- TOOL: name -->
-      <h1>TOOLNAME <span class="demo-tag">· WASM demo</span></h1>
-      <!-- TOOL: one honest sentence; keep the no-upload promise. -->
-      <p class="sub">A pure-Rust TOOL running entirely in your browser — no upload, no server. Your file never leaves this page.</p>
+      <div class="topbar">
+        <!-- TOOL: name, and nothing else. "· WASM demo" used to live here; it was
+             engineer language on a user-facing page, and "demo" undersold it —
+             this page is not a preview of the tool, it is the tool, running. The
+             line below says what actually matters, and the footer carries the
+             build provenance for whoever wants it. If you want a quiet qualifier
+             here (a version, a scope), .demo-tag is the class for it. (#9) -->
+        <h1>TOOLNAME</h1>
 
-      <label class="drop" id="drop">
-        <input type="file" id="file" accept=".epub,application/epub+zip" />
-        Drop an <strong>.epub</strong> here, or click to choose one.
-      </label>
-
-      <!-- TOOL: loading message, e.g. "Loading validator…" -->
-      <p class="status" id="status">Loading…</p>
-
-      <section id="result" hidden>
-        <!-- TOOL: result markup (verdict + table, fix cards + actionbar, …) -->
-      </section>
-
-      <footer>
-        <!-- TOOL: crate name -->
-        Served locally over HTTP. Built with <code>wasm-pack</code> from the
-        <code>TOOLNAME-wasm</code> crate. <span id="ver"></span>
-        <nav class="family">
-          A <a href="https://github.com/veripublica">veripublica</a> tool ·
-          <!-- TOOL: keep every sibling; render the current tool as a <span>,
-               not a link. -->
-          <a href="https://github.com/veripublica/epubveri">epubveri</a>
-          <a href="https://github.com/veripublica/epubsana">epubsana</a>
-          <a href="https://github.com/veripublica/epublift">epublift</a>
-          <a href="https://github.com/veripublica/conventions">conventions</a>
-        </nav>
-        <!-- Theme, part 2 of 2: the toggle. OPTIONAL — delete this button and
-             the script below it and the page keeps the auto light/dark
-             behaviour; the hook lives in tokens.css, not here. The button hides
-             itself where light-dark() is unsupported (demo.css). -->
+        <!-- Theme, part 2 of 2. Every demo ships it, top-right, in this position
+             (#7): a standard control placed differently on every page is only half
+             standard, and this is where readers look. It hides itself where
+             light-dark() is unsupported (demo.css), so it is never a dead control.
+             The script sits immediately after the button on purpose — it labels it
+             before the first paint, so the button is never briefly blank. -->
         <button class="theme-toggle" id="theme" type="button"></button>
         <script>
           (() => {
@@ -102,6 +86,47 @@
             paint();
           })();
         </script>
+      </div>
+      <!-- TOOL: one honest sentence; keep the no-upload promise. This is the line
+           that earns the reader's trust — do not trade it for a slogan. -->
+      <p class="sub">A pure-Rust TOOL running entirely in your browser — no upload, no server. Your file never leaves this page.</p>
+
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept=".epub,application/epub+zip" />
+        Drop an <strong>.epub</strong> here, or click to choose one.
+      </label>
+
+      <!-- TOOL: loading message, e.g. "Loading validator…" -->
+      <p class="status" id="status">Loading…</p>
+
+      <section id="result" hidden>
+        <!-- TOOL: result markup (verdict + table, fix cards + actionbar, …) -->
+      </section>
+
+      <footer>
+        <!-- TOOL: crate name -->
+        Served locally over HTTP. Built with <code>wasm-pack</code> from the
+        <code>TOOLNAME-wasm</code> crate. <span id="ver"></span>
+        <nav class="family">
+          A <a href="https://github.com/veripublica">veripublica</a> tool ·
+          <!-- TOOL: keep every sibling, and link every one — including this tool.
+               These point at GitHub repositories, not at the page you are on, so
+               the current tool's link is the one a visitor is most likely to want
+               (source, issues, README). Mark it with aria-current="page"; demo.css
+               renders it distinctly, by weight, and it stays clickable. (#8)
+
+               THE MEMBERSHIP RULE (#10): this nav lists the tools a reader can
+               USE. Not the machinery behind them. epubveri, epubsana, epublift are
+               things a visitor might go and run; conventions, family-web and
+               styloria are specs, templates and libraries — how the tools are
+               built, not something the reader is being offered. They are one hop
+               away via the veripublica link above, for the few who want them.
+               Do not add a repository here because it is "part of the family."
+               Add it because a publisher would click it and be glad. -->
+          <a href="https://github.com/veripublica/epubveri" aria-current="page">epubveri</a>
+          <a href="https://github.com/veripublica/epubsana">epubsana</a>
+          <a href="https://github.com/veripublica/epublift">epublift</a>
+        </nav>
       </footer>
     </main>
 
