@@ -104,6 +104,9 @@ a { color: var(--accent); }
  *   light  .verdict.valid 4.57  .verdict.invalid 4.71  .sev.fatal 9.00
  *   dark   .verdict.valid 7.00  .verdict.invalid 5.89  .sev.fatal 8.08
  *
+ * Reproduce, and re-check after any palette change:
+ *   node template/measure.mjs --table
+ *
  * One value, because three chips carrying three copies of the number is how one
  * of them ends up wrong again — which is exactly how this was found. (issue #4) */
 :root { --wash: 8%; }

@@ -25,6 +25,12 @@
  * enough contrast and enough separation from it, so --fatal is chosen for
  * legibility and the rank is carried by the background wash on .sev.fatal
  * instead. Do not "fix" it by darkening. (Measured; see issue #1.)
+ *
+ * ADDING OR CHANGING A COLOR HERE? Run `node template/measure.mjs` — it reads
+ * this file, checks every claim above against WCAG, and exits 1 if one stops
+ * holding. Do not eyeball a token; that is how the verdict chip shipped failing
+ * AA for two versions (#4). `node template/check-tokens.mjs` separately checks
+ * the @supports floor still matches these pairs.
  */
 :root {
   color-scheme: light dark;

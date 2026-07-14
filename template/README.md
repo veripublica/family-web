@@ -56,6 +56,7 @@ one grep answers which generation a demo is on *and* which bytes it took:
 | `demo.css` | The page skeleton (base layer, identical at extraction) plus the family components (verdict chip, severity colors, findings table, buttons, badge base, family footer nav, theme toggle) — each promoted from the one demo that had it, so the next tool reuses instead of reinventing. |
 | `skeleton.html` | The page shape. Copy, then fill every `TOOL:` comment. |
 | `check-tokens.mjs` | Not copied by consumers. Fails loudly if `tokens.css`'s `@supports` floor drifts from its `light-dark()` pairs. Deleted together with the floor. |
+| `measure.mjs` | Not copied by consumers. Reads the palette out of `tokens.css` and `demo.css` and verifies every measured claim their comments make — WCAG AA, chip-on-its-own-wash, focus-ring non-text contrast, ΔE2000 separation. **Run it before changing any color.** `--table` prints the full matrix. |
 
 ## Consumption model: copy + version note
 
@@ -156,6 +157,33 @@ happened.
 that inherit a severity onto a derived item (epubsana's fix cards take the
 severity of the finding they address) get the wash there too, which is correct:
 a fix for a fatal finding is as urgent as the finding.
+
+## Changing a color
+
+Run it. Do not eyeball it.
+
+```
+node template/measure.mjs           # 26 claims; exit 1 if one stops holding
+node template/measure.mjs --table   # the full matrix — use this when adding a token
+node template/check-tokens.mjs      # the @supports floor still matches the pairs
+```
+
+`measure.mjs` reads the palette out of `tokens.css` and `demo.css` rather than taking it
+as arguments, so it measures **what actually ships** and a comment cannot drift away from
+its own number. It checks four things, and each one exists because skipping it cost us
+something:
+
+| Check | Why it is there |
+| --- | --- |
+| WCAG AA (4.5:1) on `--bg` | The baseline. |
+| A chip against **its own wash**, not `--bg` | The wash raises the background luminance. Measuring against `--bg` is what hid the verdict chip failing AA for two versions (#4). |
+| Focus ring at 3:1 against **`--bg`, `--card` *and* `--border`** | WCAG 2.2 SC 1.4.11. A ring that clears the page but not the card it sits on is not a ring. |
+| ΔE2000 ≥ 10 between `--fatal`/`--err` and `--usage`/`--muted` | Contrast says "legible". ΔE says "**told apart**". Every deeper-red `--fatal` candidate in dark mode was legible and none was distinguishable — that is what forced the wash (#1). |
+
+Target sizes (WCAG 2.2 SC 2.5.8, 24×24) are **not** in the script: they depend on rendered
+line-height, and reconstructing that from CSS would be a fragile answer to a question a
+browser answers properly. The theme toggle's 29.2px is worked out in `demo.css`'s comment
+from font-size and padding; change either and redo it by hand.
 
 ## The family nav: what goes on it
 
