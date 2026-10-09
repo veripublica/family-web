@@ -1,9 +1,18 @@
-# The family demo template — v5
+# The family demo template — v6
 
 The shared look of the veripublica demo pages, in **one copy**. Extracted
 2026-07-10 from `epubveri-wasm` and `epubsana-wasm`, whose demos were the same
 hand-copied template and had already begun to drift (`.counts` was `.9rem` in
 one and `.95rem` in the other — small, but that is how divergence starts).
+
+## What changed in v6
+
+One fix in `demo.css`. Re-copy it; `tokens.css` and `skeleton.html` changed only in
+their version header.
+
+| Change | What it means for you |
+| --- | --- |
+| **`.opt` reads as one sentence** (#17) | v5 laid the option row out with flex, and in a flex row every run of text is its own item: a sentence with a `<code>` in it split into columns — and the usage example in `demo.css` was exactly that sentence. `.opt` is a hanging indent now: the box sits on the first line and the text flows as one paragraph, **bare or wrapped in a `<span>`**. No markup change; if you wrapped the sentence to work around v5, the wrapper can stay or go. |
 
 ## What changed in v5
 
@@ -55,9 +64,9 @@ adopted must edit its page — re-copying the stylesheets is not enough.
 
 ## Versions: there are two numbers, on purpose
 
-- **The template version** (`v5`) is the *generation of the look*. It is what a
+- **The template version** (`v6`) is the *generation of the look*. It is what a
   consumer writes in its copy comment, and what answers "am I behind?".
-- **The repository tag** (`v0.5.0`) is the *exact bytes*. A fix to
+- **The repository tag** (`v0.6.0`) is the *exact bytes*. A fix to
   `wasm/BUILD-PROFILE.md` moves the tag and not the template; no demo needs to
   re-copy for it.
 
@@ -68,12 +77,13 @@ adopted must edit its page — re-copying the stylesheets is not enough.
 | v3 | v0.3.0 |
 | v4 | v0.4.0 |
 | v5 | v0.5.0 |
+| v6 | v0.6.0 |
 
 Two numbers is two things to keep in step, so the copy comment carries **both** —
 one grep answers which generation a demo is on *and* which bytes it took:
 
 ```html
-<!-- family-web template v5 (family-web v0.5.0) -->
+<!-- family-web template v6 (family-web v0.6.0) -->
 ```
 
 ## Files
@@ -96,7 +106,7 @@ No build dependency, no submodule. A demo repo:
 2. links them and deletes the corresponding rules from its inline `<style>`,
    keeping only tool-specific rules there;
 3. records the template version and the tag it came from, in a comment:
-   `<!-- family-web template v5 (family-web v0.5.0) -->`.
+   `<!-- family-web template v6 (family-web v0.6.0) -->`.
 
 When the template changes, family-web bumps the version in the file headers
 and the consuming repos re-copy on their own schedule. The version comment is
