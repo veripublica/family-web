@@ -1,0 +1,8 @@
+{
+  "tools": [
+    { "name": "epubveri", "url": "https://github.com/veripublica/epubveri" },
+    { "name": "epubsana", "url": "https://github.com/veripublica/epubsana" },
+    { "name": "kepubverto", "url": "https://github.com/veripublica/kepubverto" },
+    { "name": "epublift", "url": "https://github.com/ePubLift/epublift" }
+  ]
+}
