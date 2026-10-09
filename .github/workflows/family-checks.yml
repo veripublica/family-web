@@ -1,0 +1,51 @@
+# veripublica family-web — the checks that guard what the family reads live.
+#
+# family-web's only workflow, and deliberately narrow (#13): it builds, tests and
+# releases nothing. It runs the two checks whose subject changes without a release
+# here — nav.json, which goes live on a push to the nav branch (#2), and the
+# consumers' published copies, which change on their own schedule (#14).
+#
+# Triggers:
+#   page_build  a push to `nav` rebuilt Pages. Runs from main (the default branch),
+#               so nothing but nav.json ever has to live on `nav`. It runs after
+#               the push, so it alerts rather than prevents; the gate before a push
+#               is still `node template/check-nav.mjs <file>` run locally.
+#   schedule    weekly, when nobody has pushed anything: a sibling repository
+#               renamed, moved or made private, or a consumer that edited its copy.
+#               The epublift 404 lived through three template versions because
+#               nothing ever looked at the far end (#12).
+
+name: family checks
+
+on:
+  page_build:
+  schedule:
+    - cron: "17 6 * * 1" # Mondays, 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  nav:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: nav
+          path: nav-branch
+      - name: nav.json as pushed
+        run: node template/check-nav.mjs nav-branch/nav.json
+      - name: nav.json as served
+        if: github.event_name != 'page_build' # Pages' cache may still hold the old file
+        run: node template/check-nav.mjs
+
+  copies:
+    if: github.event_name != 'page_build' # a nav push says nothing about the copies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # every tag: a copy is compared with the version it claims
+      - run: node template/check-copies.mjs

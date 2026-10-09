@@ -70,7 +70,8 @@ one grep answers which generation a demo is on *and* which bytes it took:
 | `demo.css` | The page skeleton (base layer, identical at extraction) plus the family components (verdict chip, severity colors, findings table, buttons, badge base, family footer nav, theme toggle) — each promoted from the one demo that had it, so the next tool reuses instead of reinventing. |
 | `skeleton.html` | The page shape. Copy, then fill every `TOOL:` comment. |
 | `check-tokens.mjs` | Not copied by consumers. Fails loudly if `tokens.css`'s `@supports` floor drifts from its `light-dark()` pairs. Deleted together with the floor. |
-| `check-nav.mjs` | Not copied by consumers. Checks `nav.json`: the shape the page's script accepts, and every URL opening for an anonymous visitor. `--release` also fails if the fallback list in `skeleton.html` differs from it. |
+| `check-nav.mjs` | Not copied by consumers. Checks `nav.json`: the shape the page's script accepts, every URL under `github.com/veripublica/` or a listed exception (#13), and every URL opening for an anonymous visitor. `--release` also fails if the fallback list in `skeleton.html` differs from it. Run weekly and on every `nav` push by `.github/workflows/family-checks.yml`. |
+| `check-copies.mjs` | Not copied by consumers. Reads every consumer's **published** `tokens.css` / `demo.css` and compares the bytes with the template version the copy's first line claims. An edited copy fails it (#14); a copy that is merely behind does not. Run weekly by the same workflow. |
 | `measure.mjs` | Not copied by consumers. Reads the palette out of `tokens.css` and `demo.css` and verifies every measured claim their comments make — WCAG AA, chip-on-its-own-wash, focus-ring non-text contrast, ΔE2000 separation. **Run it before changing any color.** `--table` prints the full matrix. |
 
 ## Consumption model: copy + version note
@@ -240,6 +241,15 @@ node template/check-nav.mjs path/to/nav.json   # before pushing the nav branch
 node template/check-nav.mjs                    # the published file
 node template/check-nav.mjs --release          # at a template release: fallback must match
 ```
+
+The workflow `.github/workflows/family-checks.yml` runs it after every push to `nav`
+(on GitHub's `page_build` event, from `main`) and every Monday against the published
+file — the second is the one that catches a sibling repository renamed or made private,
+which no push of ours would. Branch rules on `nav` forbid force-pushes and deletion.
+
+**Where a member may live (#13).** Under `github.com/veripublica/`, or as an exception
+listed by exact URL in `check-nav.mjs` — today one, `epublift`. A new exception is a
+decision made in an issue and a one-line change there; no demo re-copies for it.
 
 Every entry carries its **full URL**. Never derive one from a tool's name: `epublift`
 lives at `github.com/ePubLift/epublift`, outside the `veripublica` organisation, and the

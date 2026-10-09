@@ -9,6 +9,11 @@
 // own filter, or if any URL does not open for an anonymous visitor — which is
 // how every demo on template v3 showed a publisher a 404 for epublift (#12).
 //
+// It also holds the family's address rule (#13): a member lives under
+// github.com/veripublica/, and the exceptions are listed below by exact URL. The
+// page itself only checks the host — a new exception is a line here, not a
+// re-copy in every demo — so this list is where that decision is enforced.
+//
 // It does NOT judge membership. Whether a tool belongs on the nav is #10's rule —
 // "a publisher would click it and be glad" — and that is a judgement made in an
 // issue, not a check.
@@ -24,6 +29,13 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const LIVE = "https://veripublica.github.io/family-web/nav.json";
+
+// Where a member may live. Adding an exception is a decision: make it in an issue.
+const ORG = "https://github.com/veripublica/";
+const EXCEPTIONS = new Set([
+  "https://github.com/ePubLift/epublift", // came before the family (#12)
+]);
+const allowed = (url) => (url.startsWith(ORG) && /^[\w.-]+$/.test(url.slice(ORG.length))) || EXCEPTIONS.has(url);
 const args = process.argv.slice(2);
 const release = args.includes("--release");
 const source = args.find((a) => !a.startsWith("--")) ?? LIVE;
@@ -54,6 +66,7 @@ for (const [i, t] of (tools ?? []).entries()) {
   else if (names.has(t.name)) problems.push(`tools[${i}]: "${t.name}" listed twice`);
   else names.add(t.name);
   if (!/^https:\/\/[^\s]+$/.test(t?.url ?? "")) problems.push(`tools[${i}] (${t?.name}): url must be https:// with no spaces, got ${JSON.stringify(t?.url)}`);
+  else if (!allowed(t.url)) problems.push(`tools[${i}] (${t?.name}): ${t.url} is neither a ${ORG}<repo> URL nor a listed exception`);
 }
 
 // Anonymous, as a publisher would arrive: no token, no cookies. GitHub answers a
