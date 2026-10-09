@@ -147,33 +147,34 @@ If you write something page-local that a sibling would plausibly want, open an i
 **and keep shipping**. The issue changes the shared file on family-web's schedule;
 your release does not wait for it, and when it lands you delete your local rule.
 
-## Adoption notes for the two existing demos
+## First adoption: what changed for the first two demos
 
-Owners decide when; here is exactly what changes visually.
-
-Both demos are still on their pre-template inline styles, so each is a **first
-adoption**, straight to v3.
+A record of the move from hand-copied inline styles to the template, kept for
+what it shows a new demo about the canonical values. Both demos made it
+straight to v3; `kepubverto-wasm`, the third, copied v3 on its own. Which
+version each demo is on now is not written here — `check-copies.mjs` reads it
+from the published pages.
 
 **epubveri-wasm** — `.counts` bottom margin `1rem` → `.5rem` (canonical), and the
-footer gains the family nav. Its inline `<style>` shrinks to roughly one rule
+footer gained the family nav. Its inline `<style>` shrank to roughly one rule
 (`.id { white-space: nowrap }`). The `<h1>`'s inline `style=` and its
-`· WASM demo` text both go: the heading becomes the tool's name alone (#9). If you
+`· WASM demo` text both went: the heading became the tool's name alone (#9). If you
 want a quiet qualifier there later, `.demo-tag` is the class for it — but do not
 put `WASM` back in it.
 
-**epubsana-wasm** — `.counts` `.95rem` → `.9rem` and margins to the canonical
+**epubsana-wasm** — `.counts` `.95rem` → `.9rem` and margins went to the canonical
 `1rem 0 .5rem` (one point smaller, slightly more space below; if the actionbar
 spacing matters, override the margin locally — margins are page layout, that
-is legitimate). Buttons and `.badge` base move to the shared file with
+is legitimate). Buttons and `.badge` base moved to the shared file with
 **identical rules** (no visual change); the badge *tiers* (`.AutoSafe`,
-`.ConfirmNeeded`), `.fix` cards, `.after`, `.actionbar`, `.preview` stay
-page-local. Footer gains the family nav.
+`.ConfirmNeeded`), `.fix` cards, `.after`, `.actionbar`, `.preview` stayed
+page-local. Footer gained the family nav.
 
-Both gain the theme toggle, which is standard from v3 (#7), and both must mark
+Both gained the theme toggle, which is standard from v3 (#7), and both marked
 their own entry in the family nav with `aria-current="page"` — a live link, not a
 `<span>` (#8).
 
-Neither demo's JS changes for the adoption itself. (The Web-Worker recommendation
+Neither demo's JS changed for the adoption itself. (The Web-Worker recommendation
 in [`../wasm/BUILD-PROFILE.md`](../wasm/BUILD-PROFILE.md) is separate work, and
 epubveri's move to the envelope shape is its own — see veripublica/epubveri#8.)
 
@@ -203,7 +204,7 @@ a fix for a fatal finding is as urgent as the finding.
 Run it. Do not eyeball it.
 
 ```
-node template/measure.mjs           # 26 claims; exit 1 if one stops holding
+node template/measure.mjs           # 30 claims; exit 1 if one stops holding
 node template/measure.mjs --table   # the full matrix — use this when adding a token
 node template/check-tokens.mjs      # the @supports floor still matches the pairs
 ```
