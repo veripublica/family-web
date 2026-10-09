@@ -56,7 +56,7 @@ try {
   process.exit(1);
 }
 
-// The same filter the page applies (skeleton.html). An entry it would skip is an
+// The page's own filter (skeleton.html), plus the address rule. An entry the page would skip is an
 // entry nobody sees, so it is a problem here, not a silent drop.
 const tools = Array.isArray(data?.tools) ? data.tools : null;
 if (!tools?.length) problems.push(`no "tools" array, or it is empty`);

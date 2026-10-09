@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- veripublica family-web — skeleton.html — template v4
+<!-- veripublica family-web — skeleton.html — template v5
      https://github.com/veripublica/family-web
 
      The shared shape of a family WASM demo page. Copy this next to your
@@ -150,12 +150,18 @@
           // reader's file, not a result. The no-upload promise above still holds.
           (() => {
             const box = document.getElementById("family-tools");
-            const here = box.querySelector('a[aria-current="page"]')?.textContent.trim();
+            // This tool = the fallback's aria-current link, matched by name OR URL,
+            // so renaming either one in nav.json keeps "you are here" (#16).
+            const mark = box.querySelector('a[aria-current="page"]');
+            const here = { name: mark?.textContent.trim(), url: mark?.getAttribute("href") };
             fetch("https://veripublica.github.io/family-web/nav.json")
               .then((r) => (r.ok ? r.json() : null))
               .then((data) => {
+                // GitHub only. Which repositories may appear is checked in family-web
+                // (check-nav.mjs, #13); the page holds just the host, so a new
+                // exception there never means a re-copy here.
                 const tools = (Array.isArray(data?.tools) ? data.tools : []).filter(
-                  (t) => typeof t?.name === "string" && /^https:\/\/[^\s]+$/.test(t?.url ?? ""),
+                  (t) => typeof t?.name === "string" && /^https:\/\/github\.com\/[^\s]+$/.test(t?.url ?? ""),
                 );
                 if (!tools.length) return;
                 const key = (list) => list.map((t) => t.name + " " + t.url).join("\n");
@@ -169,7 +175,7 @@
                     const a = document.createElement("a");
                     a.href = t.url;
                     a.textContent = t.name;
-                    if (t.name === here) a.setAttribute("aria-current", "page");
+                    if (t.name === here.name || t.url === here.url) a.setAttribute("aria-current", "page");
                     return [a, " "];
                   }),
                 );

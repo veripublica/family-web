@@ -123,6 +123,10 @@ const SEVERITY = ["--fatal", "--err", "--warn", "--muted", "--usage"];
 const CHIPS = [[".verdict.valid", "--ok"], [".verdict.invalid", "--err"], [".sev.fatal", "--fatal"]];
 // A focus ring must clear 3:1 against everything it can land beside, not just the page.
 const RING_AGAINST = ["--bg", "--card", "--border"];
+// Text on a tint of ANOTHER color, over each surface it can sit on: .opt's <code>
+// is --muted on an --accent --wash, and an option row may sit on the page or in a
+// card. 12% failed here (light, over --card, 4.46); --wash holds. See #15.
+const TINTS = [[".opt code", "--muted", "--accent", ["--bg", "--card"]]];
 // Pairs a reader must be able to tell apart at a glance.
 const PAIRS = [["--fatal", "--err"], ["--usage", "--muted"]];
 
@@ -143,6 +147,12 @@ for (const [mode, t] of modes) {
     const bg = wash(t[tok], t["--bg"], WASH);
     const r = contrast(t[tok], bg);
     check(r >= AA_TEXT, mode, `${chip} on its own ${washMatch[1]}% wash`, r, AA_TEXT, ":1");
+  }
+  for (const [what, text, tint, surfaces] of TINTS) {
+    for (const surface of surfaces) {
+      const r = contrast(t[text], wash(t[tint], t[surface], WASH));
+      check(r >= AA_TEXT, mode, `${what}: ${text} on ${tint} ${washMatch[1]}% over ${surface}`, r, AA_TEXT, ":1");
+    }
   }
   for (const against of RING_AGAINST) {
     const r = contrast(t["--accent"], t[against]);

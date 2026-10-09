@@ -1,9 +1,22 @@
-# The family demo template — v4
+# The family demo template — v5
 
 The shared look of the veripublica demo pages, in **one copy**. Extracted
 2026-07-10 from `epubveri-wasm` and `epubsana-wasm`, whose demos were the same
 hand-copied template and had already begun to drift (`.counts` was `.9rem` in
 one and `.95rem` in the other — small, but that is how divergence starts).
+
+## What changed in v5
+
+Two components arrive, and the copies say what they are. Re-copy both stylesheets.
+`skeleton.html` changed only inside the nav script: replace that `<script>`, and
+nothing else in your page.
+
+| Change | What it means for you |
+| --- | --- |
+| **`.opt` and `.viewopts` are in `demo.css`** (#15) | An option row (a checkbox with a sentence of explanation) and a view-controls row (label, control, action pushed to the end), both from epubveri, where they were generic and had been written into its copy. Write the markup and you are done — the usage is in `demo.css`'s comment above each. The `<code>` tint in `.opt` is `--wash` now, not 12%: at 12% `--muted` on it failed AA over a card (4.46:1); at 8% the worst case is 4.74:1, and `measure.mjs` holds it. **epubveri:** delete your local copies of both. |
+| **The copies say they are copies** (#14) | The first comment of `tokens.css` and `demo.css` now says: do not edit, page styles go in your page, and `check-copies.mjs` will find an edited copy. Nothing renders differently. |
+| **The nav script checks the host** (#13) | A `nav.json` entry is used only if its URL is on `https://github.com/`. Which repositories may appear is checked in family-web, where a new exception is one line — so no demo re-copies for it. |
+| **"You are here" survives a rename** (#16) | The script recognises your tool by its `aria-current` link's name **or** URL. Change either one in `nav.json` and the mark stays; change both at once and it is lost until your next re-copy — the one known limit. |
 
 ## What changed in v4
 
@@ -42,9 +55,9 @@ adopted must edit its page — re-copying the stylesheets is not enough.
 
 ## Versions: there are two numbers, on purpose
 
-- **The template version** (`v4`) is the *generation of the look*. It is what a
+- **The template version** (`v5`) is the *generation of the look*. It is what a
   consumer writes in its copy comment, and what answers "am I behind?".
-- **The repository tag** (`v0.4.0`) is the *exact bytes*. A fix to
+- **The repository tag** (`v0.5.0`) is the *exact bytes*. A fix to
   `wasm/BUILD-PROFILE.md` moves the tag and not the template; no demo needs to
   re-copy for it.
 
@@ -54,12 +67,13 @@ adopted must edit its page — re-copying the stylesheets is not enough.
 | v2 | v0.2.0 |
 | v3 | v0.3.0 |
 | v4 | v0.4.0 |
+| v5 | v0.5.0 |
 
 Two numbers is two things to keep in step, so the copy comment carries **both** —
 one grep answers which generation a demo is on *and* which bytes it took:
 
 ```html
-<!-- family-web template v4 (family-web v0.4.0) -->
+<!-- family-web template v5 (family-web v0.5.0) -->
 ```
 
 ## Files
@@ -82,7 +96,7 @@ No build dependency, no submodule. A demo repo:
 2. links them and deletes the corresponding rules from its inline `<style>`,
    keeping only tool-specific rules there;
 3. records the template version and the tag it came from, in a comment:
-   `<!-- family-web template v4 (family-web v0.4.0) -->`.
+   `<!-- family-web template v5 (family-web v0.5.0) -->`.
 
 When the template changes, family-web bumps the version in the file headers
 and the consuming repos re-copy on their own schedule. The version comment is
