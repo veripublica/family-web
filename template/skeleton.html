@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- veripublica family-web — skeleton.html — template v3
+<!-- veripublica family-web — skeleton.html — template v4
      https://github.com/veripublica/family-web
 
      The shared shape of a family WASM demo page. Copy this next to your
@@ -116,17 +116,67 @@
                renders it distinctly, by weight, and it stays clickable. (#8)
 
                THE MEMBERSHIP RULE (#10): this nav lists the tools a reader can
-               USE. Not the machinery behind them. epubveri, epubsana, epublift are
-               things a visitor might go and run; conventions, family-web and
-               styloria are specs, templates and libraries — how the tools are
-               built, not something the reader is being offered. They are one hop
+               USE. Not the machinery behind them. epubveri, epubsana, kepubverto,
+               epublift are things a visitor might go and run; conventions,
+               family-web and styloria are specs, templates and libraries — how
+               the tools are built, not something the reader is being offered. They are one hop
                away via the veripublica link above, for the few who want them.
                Do not add a repository here because it is "part of the family."
-               Add it because a publisher would click it and be glad. -->
-          <a href="https://github.com/veripublica/epubveri" aria-current="page">epubveri</a>
-          <a href="https://github.com/veripublica/epubsana">epubsana</a>
-          <a href="https://github.com/veripublica/epublift">epublift</a>
+               Add it because a publisher would click it and be glad.
+
+               THE LIST BELOW IS THE FALLBACK (#2). The current list is
+               family-web's nav.json, fetched by the script after this nav; it
+               replaces these links when it arrives. Keep them anyway, as they
+               were in the template you copied: they are what a reader sees
+               offline, on a local server, or if the fetch fails. Your own tool
+               is recognised by its aria-current link, so keep that mark. -->
+          <span id="family-tools">
+            <a href="https://github.com/veripublica/epubveri" aria-current="page">epubveri</a>
+            <a href="https://github.com/veripublica/epubsana">epubsana</a>
+            <a href="https://github.com/veripublica/kepubverto">kepubverto</a>
+            <a href="https://github.com/ePubLift/epublift">epublift</a>
+          </span>
         </nav>
+        <script>
+          // Family nav: the current list, without a release in every tool (#2).
+          //
+          // What is shared is DATA, not code. nav.json is read as JSON and turned
+          // into links with createElement/textContent; nothing from it is ever
+          // parsed as HTML or run. A bad entry is skipped, a bad file or a failed
+          // fetch leaves the fallback list above exactly as it was.
+          //
+          // Same host as the live demos (veripublica.github.io), so no third party
+          // is involved, and the request carries nothing from the page: not the
+          // reader's file, not a result. The no-upload promise above still holds.
+          (() => {
+            const box = document.getElementById("family-tools");
+            const here = box.querySelector('a[aria-current="page"]')?.textContent.trim();
+            fetch("https://veripublica.github.io/family-web/nav.json")
+              .then((r) => (r.ok ? r.json() : null))
+              .then((data) => {
+                const tools = (Array.isArray(data?.tools) ? data.tools : []).filter(
+                  (t) => typeof t?.name === "string" && /^https:\/\/[^\s]+$/.test(t?.url ?? ""),
+                );
+                if (!tools.length) return;
+                const key = (list) => list.map((t) => t.name + " " + t.url).join("\n");
+                const shown = [...box.querySelectorAll("a")].map((a) => ({
+                  name: a.textContent.trim(),
+                  url: a.getAttribute("href"),
+                }));
+                if (key(tools) === key(shown)) return; // already current: leave focus alone
+                box.replaceChildren(
+                  ...tools.flatMap((t) => {
+                    const a = document.createElement("a");
+                    a.href = t.url;
+                    a.textContent = t.name;
+                    if (t.name === here) a.setAttribute("aria-current", "page");
+                    return [a, " "];
+                  }),
+                );
+              })
+              .catch(() => {});
+          })();
+        </script>
       </footer>
     </main>
 

@@ -1,9 +1,22 @@
-# The family demo template — v3
+# The family demo template — v4
 
 The shared look of the veripublica demo pages, in **one copy**. Extracted
 2026-07-10 from `epubveri-wasm` and `epubsana-wasm`, whose demos were the same
 hand-copied template and had already begun to drift (`.counts` was `.9rem` in
 one and `.95rem` in the other — small, but that is how divergence starts).
+
+## What changed in v4
+
+Every change is in the family nav in `skeleton.html`; the stylesheets changed
+only in their version header. A demo that has adopted v3 replaces its footer
+nav with the new one (the links, the `#family-tools` wrapper and the script
+after it) and updates its copy comment.
+
+| Change | What it means for you |
+| --- | --- |
+| **`kepubverto` is on the family nav** (#12) | The family's EPUB → KEPUB converter for Kobo readers, with its own page that converts a book in the browser. It passes the membership rule (#10): a publisher can run it on a book. It sits after `epubsana` — verify → repair → convert, the order a book goes through them — and before `epublift`, which wraps all three. |
+| **The `epublift` link works** | It pointed at `github.com/veripublica/epublift`, which does not exist — every demo's nav showed a publisher a 404. `epublift` lives at `github.com/ePubLift/epublift`; change the `href`. |
+| **The list updates itself** (#2) | The nav fetches the current list from family-web's `nav.json` and replaces the links with it. When a tool joins the family, **every live demo shows it within about ten minutes, and no other tool has to release**. The links in your markup stay: they are the fallback, shown offline, on a local server, or if the fetch fails. Keep your own tool's `aria-current="page"` link — that is how the script recognises which tool it is on. What is fetched is data, not code: it is turned into links with `textContent`, never parsed as HTML or run. |
 
 ## What changed in v3
 
@@ -29,9 +42,9 @@ adopted must edit its page — re-copying the stylesheets is not enough.
 
 ## Versions: there are two numbers, on purpose
 
-- **The template version** (`v3`) is the *generation of the look*. It is what a
+- **The template version** (`v4`) is the *generation of the look*. It is what a
   consumer writes in its copy comment, and what answers "am I behind?".
-- **The repository tag** (`v0.3.0`) is the *exact bytes*. A fix to
+- **The repository tag** (`v0.4.0`) is the *exact bytes*. A fix to
   `wasm/BUILD-PROFILE.md` moves the tag and not the template; no demo needs to
   re-copy for it.
 
@@ -40,12 +53,13 @@ adopted must edit its page — re-copying the stylesheets is not enough.
 | v1 | v0.1.0 |
 | v2 | v0.2.0 |
 | v3 | v0.3.0 |
+| v4 | v0.4.0 |
 
 Two numbers is two things to keep in step, so the copy comment carries **both** —
 one grep answers which generation a demo is on *and* which bytes it took:
 
 ```html
-<!-- family-web template v3 (family-web v0.3.0) -->
+<!-- family-web template v4 (family-web v0.4.0) -->
 ```
 
 ## Files
@@ -56,6 +70,7 @@ one grep answers which generation a demo is on *and* which bytes it took:
 | `demo.css` | The page skeleton (base layer, identical at extraction) plus the family components (verdict chip, severity colors, findings table, buttons, badge base, family footer nav, theme toggle) — each promoted from the one demo that had it, so the next tool reuses instead of reinventing. |
 | `skeleton.html` | The page shape. Copy, then fill every `TOOL:` comment. |
 | `check-tokens.mjs` | Not copied by consumers. Fails loudly if `tokens.css`'s `@supports` floor drifts from its `light-dark()` pairs. Deleted together with the floor. |
+| `check-nav.mjs` | Not copied by consumers. Checks `nav.json`: the shape the page's script accepts, and every URL opening for an anonymous visitor. `--release` also fails if the fallback list in `skeleton.html` differs from it. |
 | `measure.mjs` | Not copied by consumers. Reads the palette out of `tokens.css` and `demo.css` and verifies every measured claim their comments make — WCAG AA, chip-on-its-own-wash, focus-ring non-text contrast, ΔE2000 separation. **Run it before changing any color.** `--table` prints the full matrix. |
 
 ## Consumption model: copy + version note
@@ -66,7 +81,7 @@ No build dependency, no submodule. A demo repo:
 2. links them and deletes the corresponding rules from its inline `<style>`,
    keeping only tool-specific rules there;
 3. records the template version and the tag it came from, in a comment:
-   `<!-- family-web template v3 (family-web v0.3.0) -->`.
+   `<!-- family-web template v4 (family-web v0.4.0) -->`.
 
 When the template changes, family-web bumps the version in the file headers
 and the consuming repos re-copy on their own schedule. The version comment is
@@ -191,7 +206,7 @@ from font-size and padding; change either and redo it by hand.
 
 | On it | Off it |
 | --- | --- |
-| `epubveri`, `epubsana`, `epublift` — things a visitor might go and run | `conventions`, `family-web`, `styloria` — specs, templates, libraries |
+| `epubveri`, `epubsana`, `kepubverto`, `epublift` — things a visitor might go and run | `conventions`, `family-web`, `styloria` — specs, templates, libraries |
 
 The nav ran for two versions with a *list* and no *rule*, which is how `conventions`
 — a document about CLI flags and exit codes — ended up on a page written for
@@ -205,6 +220,30 @@ costs one hop for the few and returns a line that means something to the many.
 
 Do not add a repository here because it is "part of the family." Add it because a
 publisher would click it and be glad. (#10)
+
+### Where the list lives (#2)
+
+The list a reader sees is **`nav.json`**, published from family-web's `nav` branch to
+`https://veripublica.github.io/family-web/nav.json` — the same host as the live
+demos. The demo's script fetches it and rebuilds the links; the links written in the
+page are the fallback. So adding a tool to the family is a change to `nav.json` and
+nothing else: it is live within GitHub Pages' ten-minute cache, and no demo releases
+for it.
+
+`nav.json` is a **data channel, not a template file**. It has no template version, and
+changing it is not a release — the one place in the family where `main`-style
+publishing (push = live) is allowed, and only for this file, which is why it has a
+branch of its own. What stands in for the release is the check:
+
+```sh
+node template/check-nav.mjs path/to/nav.json   # before pushing the nav branch
+node template/check-nav.mjs                    # the published file
+node template/check-nav.mjs --release          # at a template release: fallback must match
+```
+
+Every entry carries its **full URL**. Never derive one from a tool's name: `epublift`
+lives at `github.com/ePubLift/epublift`, outside the `veripublica` organisation, and the
+nav pointed at a 404 for three versions because someone assumed otherwise (#12).
 
 Every entry is a **link**, the current tool included, marked `aria-current="page"` and
 distinguished by **weight, not color** (#8). The page has a color grammar — `--accent`
