@@ -30,8 +30,8 @@ jobs:
   nav:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7.0.1
         with:
           ref: nav
           path: nav-branch
@@ -45,7 +45,7 @@ jobs:
     if: github.event_name != 'page_build' # a nav push says nothing about the copies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0 # every tag: a copy is compared with the version it claims
       - run: node template/check-copies.mjs
