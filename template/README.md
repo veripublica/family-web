@@ -1,9 +1,19 @@
-# The family demo template — v6
+# The family demo template — v7
 
 The shared look of the veripublica demo pages, in **one copy**. Extracted
 2026-07-10 from `epubveri-wasm` and `epubsana-wasm`, whose demos were the same
 hand-copied template and had already begun to drift (`.counts` was `.9rem` in
 one and `.95rem` in the other — small, but that is how divergence starts).
+
+## What changed in v7
+
+Two additions in `demo.css`. Re-copy it; `tokens.css` changed only in its version
+header, and `skeleton.html` in its header and one comment — no page edits.
+
+| Change | What it means for you |
+| --- | --- |
+| **`textarea` and `.field` are in `demo.css`** (#18) | A free-text input, from kepubverto, styled as `select`'s twin, and a field wrapper: label above, control, a sentence of help below. Body font by default; add `class="mono"` when the content is code. The usage is in `demo.css`'s comment. One difference from `select` on purpose: the edge is `--muted`, not `--border`, because an empty text field is identified by its edge alone and `--border` is 1.27:1 against the field's fill (WCAG 2.2 SC 1.4.11 needs 3:1). `measure.mjs` holds it, and the placeholder at AA: 36 claims now. **kepubverto:** delete `.cssopt`, rename the wrapper to `.field`, add `class="mono"` to the textarea. |
+| **`.status` keeps line breaks** (#18) | `white-space: pre-line`, so a status that lists several things shows one per line. Single-line text renders as before. **kepubverto:** delete your local `#status` rule. |
 
 ## What changed in v6
 
@@ -64,9 +74,9 @@ adopted must edit its page — re-copying the stylesheets is not enough.
 
 ## Versions: there are two numbers, on purpose
 
-- **The template version** (`v6`) is the *generation of the look*. It is what a
+- **The template version** (`v7`) is the *generation of the look*. It is what a
   consumer writes in its copy comment, and what answers "am I behind?".
-- **The repository tag** (`v0.6.0`) is the *exact bytes*. A fix to
+- **The repository tag** (`v0.7.0`) is the *exact bytes*. A fix to
   `wasm/BUILD-PROFILE.md` moves the tag and not the template; no demo needs to
   re-copy for it.
 
@@ -78,12 +88,13 @@ adopted must edit its page — re-copying the stylesheets is not enough.
 | v4 | v0.4.0 |
 | v5 | v0.5.0 |
 | v6 | v0.6.0 |
+| v7 | v0.7.0 |
 
 Two numbers is two things to keep in step, so the copy comment carries **both** —
 one grep answers which generation a demo is on *and* which bytes it took:
 
 ```html
-<!-- family-web template v6 (family-web v0.6.0) -->
+<!-- family-web template v7 (family-web v0.7.0) -->
 ```
 
 ## Files
@@ -91,7 +102,7 @@ one grep answers which generation a demo is on *and* which bytes it took:
 | File | What it is |
 | --- | --- |
 | `tokens.css` | The design tokens (colors, light/dark, and the `data-theme` hook). Byte-identical in both demos at extraction; now canonical here. |
-| `demo.css` | The page skeleton (base layer, identical at extraction) plus the family components (verdict chip, severity colors, findings table, buttons, badge base, family footer nav, theme toggle) — each promoted from the one demo that had it, so the next tool reuses instead of reinventing. |
+| `demo.css` | The page skeleton (base layer, identical at extraction) plus the family components (verdict chip, severity colors, findings table, buttons, textarea and field, option and view rows, badge base, family footer nav, theme toggle) — each promoted from the one demo that had it, so the next tool reuses instead of reinventing. |
 | `skeleton.html` | The page shape. Copy, then fill every `TOOL:` comment. |
 | `check-tokens.mjs` | Not copied by consumers. Fails loudly if `tokens.css`'s `@supports` floor drifts from its `light-dark()` pairs. Deleted together with the floor. |
 | `check-nav.mjs` | Not copied by consumers. Checks `nav.json`: the shape the page's script accepts, every URL under `github.com/veripublica/` or a listed exception (#13), and every URL opening for an anonymous visitor. `--release` also fails if the fallback list in `skeleton.html` differs from it. Run weekly and on every `nav` push by `.github/workflows/family-checks.yml`. |
@@ -106,7 +117,7 @@ No build dependency, no submodule. A demo repo:
 2. links them and deletes the corresponding rules from its inline `<style>`,
    keeping only tool-specific rules there;
 3. records the template version and the tag it came from, in a comment:
-   `<!-- family-web template v6 (family-web v0.6.0) -->`.
+   `<!-- family-web template v7 (family-web v0.7.0) -->`.
 
 When the template changes, family-web bumps the version in the file headers
 and the consuming repos re-copy on their own schedule. The version comment is
@@ -204,7 +215,7 @@ a fix for a fatal finding is as urgent as the finding.
 Run it. Do not eyeball it.
 
 ```
-node template/measure.mjs           # 30 claims; exit 1 if one stops holding
+node template/measure.mjs           # 36 claims; exit 1 if one stops holding
 node template/measure.mjs --table   # the full matrix — use this when adding a token
 node template/check-tokens.mjs      # the @supports floor still matches the pairs
 ```
@@ -293,6 +304,11 @@ in both themes, with no markup and no JS. `select` matches the button shape and 
 the browser's own arrow and popup, which are faster, more accessible, and far better
 on a phone than anything drawn with pseudo-elements. Write the `<input>`; you are
 done.
+
+`textarea` (v7, #18) takes the same shape, with one difference: its edge is `--muted`,
+not `--border`. A button is identified by its label and a select by its value; an empty
+text field by nothing but its edge, which therefore needs 3:1 (SC 1.4.11). Put it in a
+`.field` for a label above and a line of help below; add `.mono` when it holds code.
 
 **Focus.** There was no `:focus` rule in the template until v2 — the whole layer was
 missing, which is how a keyboard-unreachable drop zone (#5) survived a release. The

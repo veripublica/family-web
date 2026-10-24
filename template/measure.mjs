@@ -109,6 +109,16 @@ if (!washMatch) {
 }
 const WASH = Number(washMatch[1]) / 100;
 
+// A text field's edge and placeholder, read from demo.css's textarea rules (#18).
+const tokenIn = (sel, prop) => {
+  const rule = demoCss.match(new RegExp(`(?:^|\\n)${sel.replace(/[.:]/g, "\\$&")}\\s*\\{([^}]*)\\}`));
+  const v = rule && rule[1].match(new RegExp(`(?:^|[\\s;])${prop}:[^;]*var\\((--[\\w-]+)\\)`));
+  if (!v) { console.error(`No ${prop}: var(--…) in demo.css's ${sel} rule. Fix this script or the rule.`); process.exit(1); }
+  return v[1];
+};
+const FIELD_EDGE = tokenIn("textarea", "border");
+const PLACEHOLDER = tokenIn("textarea::placeholder", "color");
+
 const modes = [["light", light], ["dark", dark]];
 
 /* ---------- the claims, and the thresholds that make them claims ---------- */
@@ -127,6 +137,10 @@ const RING_AGAINST = ["--bg", "--card", "--border"];
 // is --muted on an --accent --wash, and an option row may sit on the page or in a
 // card. 12% failed here (light, over --card, 4.46); --wash holds. See #15.
 const TINTS = [[".opt code", "--muted", "--accent", ["--bg", "--card"]]];
+// An empty text field is identified by its edge alone, so the edge is non-text that
+// must clear 3:1 against the field's fill (--card) and the page around it. --border
+// does not (1.27 light); see #18. The placeholder is text on the fill.
+const EDGE_AGAINST = ["--bg", "--card"];
 // Pairs a reader must be able to tell apart at a glance.
 const PAIRS = [["--fatal", "--err"], ["--usage", "--muted"]];
 
@@ -157,6 +171,14 @@ for (const [mode, t] of modes) {
   for (const against of RING_AGAINST) {
     const r = contrast(t["--accent"], t[against]);
     check(r >= NON_TEXT, mode, `focus ring vs ${against}`, r, NON_TEXT, ":1");
+  }
+  for (const against of EDGE_AGAINST) {
+    const r = contrast(t[FIELD_EDGE], t[against]);
+    check(r >= NON_TEXT, mode, `textarea edge ${FIELD_EDGE} vs ${against}`, r, NON_TEXT, ":1");
+  }
+  {
+    const r = contrast(t[PLACEHOLDER], t["--card"]);
+    check(r >= AA_TEXT, mode, `textarea placeholder ${PLACEHOLDER} on --card`, r, AA_TEXT, ":1");
   }
   for (const [a, b] of PAIRS) {
     const d = deltaE(t[a], t[b]);
