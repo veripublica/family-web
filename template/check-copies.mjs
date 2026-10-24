@@ -23,7 +23,7 @@
 
 import { execFileSync } from "node:child_process";
 
-// Who copies what (CLAUDE.md "Consumers", template README "Consumption model").
+// Who copies what (template README, "Consumption model").
 const CONSUMERS = [
   { name: "epubveri", base: "https://veripublica.github.io/epubveri/", files: ["tokens.css", "demo.css"] },
   { name: "epubsana", base: "https://veripublica.github.io/epubsana/", files: ["tokens.css", "demo.css"] },
