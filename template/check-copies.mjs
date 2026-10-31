@@ -28,6 +28,7 @@ const CONSUMERS = [
   { name: "epubveri", base: "https://veripublica.github.io/epubveri/", files: ["tokens.css", "demo.css"] },
   { name: "epubsana", base: "https://veripublica.github.io/epubsana/", files: ["tokens.css", "demo.css"] },
   { name: "kepubverto", base: "https://veripublica.github.io/kepubverto/", files: ["tokens.css", "demo.css"] },
+  { name: "imagoverto", base: "https://veripublica.github.io/imagoverto/", files: ["tokens.css", "demo.css"] },
   { name: "paginaverto", base: "https://veripublica.github.io/paginaverto/", files: ["tokens.css", "demo.css"] },
   { name: "conventions", base: "https://veripublica.github.io/conventions/assets/", files: ["tokens.css"] },
 ];
