@@ -1,9 +1,20 @@
-# The family demo template — v7
+# The family demo template — v8
 
 The shared look of the veripublica demo pages, in **one copy**. Extracted
 2026-07-10 from `epubveri-wasm` and `epubsana-wasm`, whose demos were the same
 hand-copied template and had already begun to drift (`.counts` was `.9rem` in
 one and `.95rem` in the other — small, but that is how divergence starts).
+
+## What changed in v8
+
+One change, in the family nav's fallback list in `skeleton.html`. The
+stylesheets changed only in their version header. Re-copy `tokens.css` and
+`demo.css`, replace the links inside your `#family-tools` with the new list
+(keep `aria-current="page"` on your own tool), and update your copy comment.
+
+| Change | What it means for you |
+| --- | --- |
+| **`imagoverto` and `paginaverto` are on the family nav** | Two new members, each with a page that works in the browser with no upload. `imagoverto` converts a book's cover or figures (for example WebP back to JPEG for readers that cannot show WebP); `paginaverto` reads a PDF's text and chapters, the step before `epublift`. Both pass the membership rule (#10). They sit after `kepubverto` and before `epublift`, which wraps the others. Live on `nav.json` since 2026-10-31, so every page already shows them online; the fallback now says the same, so a page offline or on a local server does too. |
 
 ## What changed in v7
 
@@ -74,9 +85,9 @@ adopted must edit its page — re-copying the stylesheets is not enough.
 
 ## Versions: there are two numbers, on purpose
 
-- **The template version** (`v7`) is the *generation of the look*. It is what a
+- **The template version** (`v8`) is the *generation of the look*. It is what a
   consumer writes in its copy comment, and what answers "am I behind?".
-- **The repository tag** (`v0.7.0`) is the *exact bytes*. A fix to
+- **The repository tag** (`v0.8.0`) is the *exact bytes*. A fix to
   `wasm/BUILD-PROFILE.md` moves the tag and not the template; no demo needs to
   re-copy for it.
 
@@ -89,12 +100,13 @@ adopted must edit its page — re-copying the stylesheets is not enough.
 | v5 | v0.5.0 |
 | v6 | v0.6.0 |
 | v7 | v0.7.0 |
+| v8 | v0.8.0 |
 
 Two numbers is two things to keep in step, so the copy comment carries **both** —
 one grep answers which generation a demo is on *and* which bytes it took:
 
 ```html
-<!-- family-web template v7 (family-web v0.7.0) -->
+<!-- family-web template v8 (family-web v0.8.0) -->
 ```
 
 ## Files
@@ -117,7 +129,7 @@ No build dependency, no submodule. A demo repo:
 2. links them and deletes the corresponding rules from its inline `<style>`,
    keeping only tool-specific rules there;
 3. records the template version and the tag it came from, in a comment:
-   `<!-- family-web template v7 (family-web v0.7.0) -->`.
+   `<!-- family-web template v8 (family-web v0.8.0) -->`.
 
 When the template changes, family-web bumps the version in the file headers
 and the consuming repos re-copy on their own schedule. The version comment is
