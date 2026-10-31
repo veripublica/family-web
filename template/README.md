@@ -243,7 +243,7 @@ from font-size and padding; change either and redo it by hand.
 
 | On it | Off it |
 | --- | --- |
-| `epubveri`, `epubsana`, `kepubverto`, `epublift` — things a visitor might go and run | `conventions`, `family-web`, `styloria` — specs, templates, libraries |
+| `epubveri`, `epubsana`, `kepubverto`, `paginaverto`, `epublift` — things a visitor might go and run | `conventions`, `family-web`, `styloria` — specs, templates, libraries |
 
 The nav ran for two versions with a *list* and no *rule*, which is how `conventions`
 — a document about CLI flags and exit codes — ended up on a page written for
