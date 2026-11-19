@@ -1,34 +1,35 @@
 # veripublica family-web
 
-Shared web infrastructure for the [veripublica](https://github.com/veripublica)
-tool family — the things the tools' **browser-facing surfaces** have in common,
-kept in one copy so they cannot drift apart.
+The veripublica tools each have a demo page that runs the tool in your
+browser, through WebAssembly, for example
+[epubveri's](https://veripublica.github.io/epubveri/). This repository holds
+what those pages share, so that each tool doesn't keep its own copy that
+slowly drifts away from the others. I started it the day I caught two demos'
+hand-copied styles already disagreeing.
 
-The family's *behavioural* contract (flags, exit codes, output naming, machine
-format) lives in [`conventions`](https://github.com/veripublica/conventions).
-This repository is its web-side sibling: how the WASM demos are built, and
-how they look.
+Most of it is the family demo template: `tokens.css` holds the colors, in
+light and dark, `demo.css` the page layout and the common components, and
+`skeleton.html` the page shape. The demos copy these files and note which
+version they took; the current one is template v8. There is nothing to
+install and no build step. Every color claim in the stylesheets, such as text
+contrast meeting WCAG AA, is checked by a script in the same folder, so the
+numbers in the comments can be re-run rather than trusted.
+[`template/README.md`](./template/README.md) explains how to adopt it and what
+changed in each version.
 
-## Contents
+The repository also holds the list of tools in the demos' shared navigation,
+and my measurements of release settings for the family's WebAssembly builds,
+in [`wasm/BUILD-PROFILE.md`](./wasm/BUILD-PROFILE.md), with the scripts that
+produced them. The tools' command-line behaviour, their options and exit
+codes, is agreed in a sibling repository,
+[conventions](https://github.com/veripublica/conventions).
 
-| Path | What it is |
-| --- | --- |
-| [`wasm/BUILD-PROFILE.md`](./wasm/BUILD-PROFILE.md) | The measured release-profile recommendation for the family's WASM crates — every alternative benchmarked, with the numbers that rejected it. |
-| [`wasm/matrix/`](./wasm/matrix/) | The scripts that produced those numbers. Parametrized; run them against any sibling crate before assuming the results transfer. |
-| [`template/`](./template/) | **The family demo template, v8** — `tokens.css`, `demo.css`, `skeleton.html`, extracted from the first two demos the day their hand-copied styles were caught drifting. Consumption: copy + version note, no build dependency. Adoption notes, and what changed in each version, are in its README. |
+If you want the template for your own page, copy the three files from
+`template/` and keep the version comment at the top of each. If something in
+it is wrong or missing, open an issue here. The rules, the checks and the
+release steps are in [`AGENTS.md`](./AGENTS.md).
 
-## The house rule this repository exists to serve
+## Licence
 
-**Measured, not assumed.** Every recommendation in here carries the numbers
-that produced it and the scripts to reproduce them. If a number is missing,
-the recommendation is missing.
-
-## License
-
-**`AGPL-3.0-only OR LicenseRef-veripublica-Commercial`** — the family's house
-dual license, covering everything in this repository: documentation,
-measurement scripts, and the shared template assets. See
-[`LICENSE`](./LICENSE) for the AGPL text and
-[`LICENSE-COMMERCIAL.md`](./LICENSE-COMMERCIAL.md) for the commercial option.
-(The conventions *spec* is CC-BY-4.0 because a convention is meant to be
-adopted; this repository is code and analysis, and takes the code license.)
+`AGPL-3.0-only OR LicenseRef-veripublica-Commercial`. See [`LICENSE`](./LICENSE)
+and [`LICENSE-COMMERCIAL.md`](./LICENSE-COMMERCIAL.md).
