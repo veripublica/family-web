@@ -96,11 +96,12 @@ proves hot-path-bound should re-measure E rather than assume it.
 
 ## Related, not yet done
 
-- **Move validation into a Web Worker** in both demo pages: today `validate()`
-  runs synchronously on the UI thread, so a large book freezes the page before
-  the "Validating…" status even paints. Transfer the `ArrayBuffer`
-  (zero-copy) and the peak memory also drops.
-- **Extract the shared demo template** into this repository: the two demo pages
-  are the same hand-copied template and have already drifted (`.counts` is
-  `.9rem` in one, `.95rem` in the other). Tokens + skeleton belong here, in one
-  copy.
+- **Move the work into a Web Worker** in the epubveri, epubsana and
+  kepubverto demo pages: there the call into the WASM module (`validate()` in
+  epubveri) runs synchronously on the UI thread, so a large book freezes the
+  page before the status line even paints. Transfer the `ArrayBuffer`
+  (zero-copy) and the peak memory also drops. The paginaverto and imagoverto
+  demos already run in a worker (checked on the live pages, 2026-11-19).
+
+Done since this was written: the shared demo template is extracted, in
+[`template/`](../template/) (template v1, family-web v0.1.0).
